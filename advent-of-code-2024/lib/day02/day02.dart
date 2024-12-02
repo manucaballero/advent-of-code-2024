@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:advent_of_code_2024/utils/utils.dart';
 
 
@@ -7,20 +5,7 @@ int partA(){
 
   int response = 0;
 
-  List<String> lines = obtainFileLines('lib/day02/input.txt');
-
-  List<List<int>> reports = [];
-
-  for(String line in lines){
-
-   List<String> numbersAsString = line.split(' ');
-   List<int> report = [];
-   numbersAsString.forEach((element) {
-
-    report.add(int.parse(element));
-    });
-    reports.add(report);
-  }
+  List<List<int>> reports = obtainReports();
 
   reports.forEach((element) {
     
@@ -29,6 +14,40 @@ int partA(){
   });
 
   return response;
+}
+
+int partB(){
+
+  int response = 0;
+
+  List<List<int>> reports = obtainReports();
+
+  reports.forEach((element) {
+    
+    bool isSafe = isReportSafeWithProblemDampener(element);
+    if(isSafe) response++;
+  });
+
+  return response;
+}
+
+
+List<List<int>> obtainReports() {
+  List<String> lines = obtainFileLines('lib/day02/input.txt');
+  
+  List<List<int>> reports = [];
+  
+  for(String line in lines){
+  
+   List<String> numbersAsString = line.split(' ');
+   List<int> report = [];
+   numbersAsString.forEach((element) {
+  
+    report.add(int.parse(element));
+    });
+    reports.add(report);
+  }
+  return reports;
 }
 
 bool isReportSafe(List<int> report){
@@ -58,5 +77,22 @@ bool isReportSafe(List<int> report){
       }
     }
   }
+  return result;
+}
+
+bool isReportSafeWithProblemDampener(List<int> report){
+  
+  bool result = true;
+  int originalSize = report.length;
+
+  result = isReportSafe(report);
+  int counter = 0;
+  while(!result && counter < originalSize){
+    List<int> updatedReport = List.from(report);
+    updatedReport.removeAt(counter);
+    result = isReportSafe(updatedReport);
+    counter++;
+  }
+
   return result;
 }
